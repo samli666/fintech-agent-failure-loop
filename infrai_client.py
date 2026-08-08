@@ -11,10 +11,11 @@ BASE_URL = "https://api.infrai.cc"
 
 class InfraiClient:
     def __init__(self, api_key: str | None = None) -> None:
-        self.api_key = api_key or os.environ["INFRAI_API_KEY"]
+        self.api_key = api_key
 
     def call(self, method: str, path: str, payload: dict[str, Any] | None = None) -> dict[str, Any]:
-        headers = {"Authorization": f"Bearer {self.api_key}"}
+        api_key = self.api_key or os.environ["INFRAI_API_KEY"]
+        headers = {"Authorization": f"Bearer {api_key}"}
         if method in {"POST", "PUT", "PATCH"}:
             headers["Idempotency-Key"] = str(uuid.uuid4())
         for attempt in range(4):

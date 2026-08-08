@@ -11,14 +11,17 @@ def run_step(step: str, fn: Callable[..., Any], **inputs: Any) -> Any:
     try:
         return fn(**inputs)
     except Exception as exc:
-        infrai.capture(
-            title=f"transaction-agent/{step} failed",
-            message=f"{type(exc).__name__}: {exc}",
-            level="error",
-            fingerprint=["transaction-agent", step],
-            exception=traceback.format_exc(),
-            context={"step": step, "inputs": inputs},
-        )
+        try:
+            infrai.capture(
+                title=f"transaction-agent/{step} failed",
+                message=f"{type(exc).__name__}: {exc}",
+                level="error",
+                fingerprint=["transaction-agent", step],
+                exception=traceback.format_exc(),
+                context={"step": step, "inputs": inputs},
+            )
+        except Exception:
+            pass
         raise
 
 
